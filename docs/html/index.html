@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>ChatGpt-2 OpenAI 部署测试【bugstack.cn@小傅哥】</title>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.serialize-object.min.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+
+<style>
+body{
+	background-image:url(img/bg.jpg);
+	background-repeat:no-repeat;
+	background-size:cover;
+	font-family:”微软雅黑”;
+}
+
+
+#chatDiv{
+	position: relative;
+	margin:0 auto;
+	margin-top:150px;
+	width:839px;
+	height:667px;
+	background-color:#CCCCCC;
+	border-radius:3px;-moz-border-radius:3px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="chatDiv">
+	<!-- left -->
+	<div style="width:60px; height:667px; background-color:#2D2B2A; float:left;">
+		<!-- 头像 -->
+		<div style="width:35px; height:35px; margin:0 auto; margin-top:19px; margin-left:12px; float:left; border:1px solid #666666;border-radius:3px;-moz-border-radius:3px;">
+			<img src="img/bugstack.png" width="35px" height="35px"/>
+		</div>
+
+		<!-- 聊天 -->
+		<div style="width:28px; height:28px; margin:0 auto; margin-top:25px; margin-left:16px; float:left;">
+			<img src="img/chat.png" width="28px" height="28px"/>
+		</div>
+
+		<!-- 好友 -->
+		<div style="width:28px; height:28px; margin:0 auto; margin-top:20px; margin-left:16px; float:left;">
+			<img src="img/friend.png" width="28px" height="28px"/>
+		</div>
+
+		<!-- 收藏 -->
+		<div style="width:28px; height:28px; margin:0 auto; margin-top:20px; margin-left:16px; float:left;">
+			<img src="img/collection.png" width="28px" height="28px"/>
+		</div>
+
+		<!-- 设置 -->
+		<div style="width:20px; height:20px; margin:0 auto; margin-left:20px; float:left; position:absolute;bottom:0; margin-bottom:12px;">
+			<img src="img/set.png" width="20px" height="20px"/>
+		</div>
+
+	</div>
+
+	<!-- center -->
+	<div style="width:250px; height:667px; background-color:#EBE9E8; float:left;">
+		<div style=" background-image:url(img/search.png); background-repeat:no-repeat;margin:0 auto; margin-top:25px; padding-top:5px; padding-bottom:5px; width:210px; background-color:#DBD9D8;border-radius:3px;-moz-border-radius:3px; float:left; margin-left:20px; font-size:12px; color:#333333;text-indent:27px;">
+			https://bugstack.cn
+		</div>
+
+		<!-- friendList -->
+		<div id="friendList" style="float:left; margin-top:5px;">
+			<div style="width:250px; height:65px;">
+
+				<table style="width:240px; height:60px; margin:0 auto; margin-top:2px; background-color:#C9C7C6;">
+					<tr>
+						<td rowspan="2" width="50"><img src="img/chatgpt.png" width="50px" height="50px" style="border-radius:3px;-moz-border-radius:3px;"/></td>
+						<td style="color:#333333; text-indent:5px; font-size:12px; vertical-align:bottom; font-weight:bolder;">ChatGpt-2 OpenAI</td>
+					</tr>
+					<tr>
+						<td style="color:#999999; text-indent:5px; font-size:10px;">ChatGpt：向我提问，自动回复..</td>
+					</tr>
+				</table>
+
+				<table style="width:240px; height:60px; margin:0 auto; margin-top:2px; background-color:#E5E5E5;cursor: pointer;" onclick="javascript:window.open('https://public.zsxq.com/groups/48411118851818.html');">
+					<tr>
+						<td rowspan="2" width="50"><img src="img/head3.jpg" width="50px" height="50px" style="border-radius:3px;-moz-border-radius:3px;"/></td>
+						<td style="color:#333333; text-indent:5px; font-size:12px; vertical-align:bottom; font-weight:bolder;">码农会锁</td>
+					</tr>
+					<tr>
+						<td style="color:#999999; text-indent:5px; font-size:10px;">小傅哥：Lottery 项目做完了吗..</td>
+					</tr>
+				</table>
+
+				<table style="width:240px; height:60px; margin:0 auto; margin-top:2px; background-color:#E5E5E5;cursor: pointer;" onclick="javascript:window.open('https://bugstack.cn/md/zsxq/introduce.html');">
+					<tr>
+						<td rowspan="2" width="50"><img src="img/head12.png" width="50px" height="50px" style="border-radius:3px;-moz-border-radius:3px;"/></td>
+						<td style="color:#333333; text-indent:5px; font-size:12px; vertical-align:bottom; font-weight:bolder;">小傅哥</td>
+					</tr>
+					<tr>
+						<td style="color:#999999; text-indent:5px; font-size:10px;">小白：傅哥，推荐个实战项目呗</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- chat -->
+	<div id="chat" style="width:529px; height:667px; background-color:#F5F5F5; float:right;">
+		<div style="width:16px; height:16px; background-image:url(img/exit.png); background-repeat:no-repeat; float:right; margin-top:10px; margin-right:30px;"></div>
+		<div style="width:16px; height:16px; background-image:url(img/min.png); background-repeat:no-repeat; float:right; margin-top:10px; margin-right:12px;"></div>
+		<div style="border-bottom:1px #E7E7E7 solid;width:509px; padding-top:0px; padding-left:20px; padding-bottom:10px; font-size:18px; font-weight:bolder;float:left;">
+			ChatGpt-2 OpenAI 部署测试
+		</div>
+
+		<!-- 会话区域 begin -->
+		<div id="show" style="width:529px; height:434px; float:left;overflow-y:scroll; margin-bottom:15px;">
+
+			<!-- 消息块；系统 -->
+			<div class="msgBlockSystem" style="margin-left:30px; margin-top:15px; width:340px; height:auto; margin-bottom:15px; float:left;">
+				<div class="msgBlock_userHeadImg" style="float:left; width:35px; height:35px;border-radius:3px;-moz-border-radius:3px; background-color:#FFFFFF;">
+					<img class="point" src="img/head0.jpg" width="35px" height="35px" style="border-radius:3px;-moz-border-radius:3px;"/>
+				</div>
+
+				<div class="msgBlock_channelId" style="float:left; width:100px; margin-top:-5px; margin-left:10px; padding-bottom:2px; font-size:10px;">
+					系统消息
+				</div>
+
+				<div class="msgBlock_msgInfo" style="height:auto;width:280px;float:left;margin-left:12px; margin-top:4px;border-radius:3px;-moz-border-radius:3px; ">
+					<div style="width:4px; height:20px; background-color:#CC0000; float:left;border-radius:3px;-moz-border-radius:3px;"></div>
+					<div class="point" style="float:left;width:260px; padding:7px; background-color:#FFFFFF; border-radius:3px;-moz-border-radius:3px; height:auto; font-size:12px;display:block;word-break: break-all;word-wrap: break-word;">
+						小傅哥(微信：fustack)，互联网大厂T8架构师。公众号【bugstack虫洞栈】，《重学Java设计模式》、《手写Spring：渐进式源码实践》图书作者。 博客：<a href="https://bugstack.cn" target="_blank">https://bugstack.cn</a>
+						<br/><br/>
+						此聊天是小傅哥基于OpenAI GPT-2开源项目训练部署，讲解视频：<a href="https://www.bilibili.com/video/BV1LG4y1P7bo" target="_blank">https://www.bilibili.com/video/BV1LG4y1P7bo</a> —— 目前是50万的数据物料训练，只能日常解闷闲聊，而且这傻狗会喷人。
+<br/><br/>
+沉淀、分享、成长，让自己和他人都能有所收获！<hr/><img width="260" height="260" src="img/qrcode.png" />
+					</div>
+				</div>
+			</div>
+
+			<!-- 消息块；好友 -->
+			<div class="msgBlockFriendClone" style=" display:none; margin-left:30px; margin-top:15px; width:340px; height:auto; margin-bottom:15px; float:left;">
+				<div class="msgBlock_userHeadImg" style="float:left; width:35px; height:35px;border-radius:3px;-moz-border-radius:3px; background-color:#FFFFFF;">
+					<img class="headPoint" src="img/head5.jpg" width="35px" height="35px" style="border-radius:3px;-moz-border-radius:3px;"/>
+				</div>
+
+				<div class="msgBlock_channelId" style="float:left; width:100px; margin-top:-5px; margin-left:10px; padding-bottom:2px; font-size:10px;">
+					<!-- 名称 -->
+				</div>
+
+				<div class="msgBlock_msgInfo" style="height:auto;width:280px;float:left;margin-left:12px; margin-top:4px;border-radius:3px;-moz-border-radius:3px; ">
+					<div style="width:4px; height:20px; background-color:#CC0000; float:left;border-radius:3px;-moz-border-radius:3px;"></div>
+					<div class="msgPoint" style="float:left;width:130px; padding:7px; background-color:#FFFFFF; border-radius:3px;-moz-border-radius:3px; height:auto; font-size:12px;display:block;word-break: break-all;word-wrap: break-word;">
+						<!-- 信息 -->
+					</div>
+				</div>
+			</div>
+
+			<!-- 消息块；自己 -->
+			<div class="msgBlockOwnerClone" style=" display:none; margin-right:30px; margin-top:15px; width:210px; height:auto; margin-bottom:15px; float:right;">
+
+				<div style="float:right; width:35px; height:35px;border-radius:3px;-moz-border-radius:3px; background-color:#FFFFFF;">
+					<img class="headPoint" width="35px" height="35px" style="border-radius:3px;-moz-border-radius:3px;"/>
+				</div>
+
+				<div class="msgBlock_msgInfo" style="height:auto;width:150px;float:left;margin-left:12px; margin-top:4px;border-radius:3px;-moz-border-radius:3px; ">
+					<div class="msgPoint" style="float:left;width:130px; padding:7px; background-color:#FFFFFF; border-radius:3px;-moz-border-radius:3px; height:auto; font-size:12px;display:block;word-break: break-all;word-wrap: break-word;">
+						<!-- 信息 -->
+					</div>
+					<div style="width:4px; height:20px; background-color:#CC0000; float:right;border-radius:3px;-moz-border-radius:3px;"></div>
+				</div>
+
+			</div>
+
+			<span id="msgPoint"></span>
+
+		</div>
+		<!-- 会话区域 end -->
+		<div style="width:100%; height:2px; float:left; background-color:#CCCCCC;"></div>
+		<div style="margin:0 auto; width:100%; height:149px; margin-top:5px;  background-color:#FFFFFF; float:left;">
+			<textarea id="sendBox" style="font-size:14px; border:0; width:499px; height:80px; outline:none; padding:15px;font-family:”微软雅黑”;resize: none;"></textarea>
+
+			<div style="margin-top:10px; float:right; margin-right:5px; padding:5px; padding-left:15px; padding-right:15px; font-size:12px; background-color:#F5F5F5;border-radius:3px;-moz-border-radius:3px; cursor:pointer;" onclick="javascript:util.send();">发送(Enter)</div>
+		</div>
+	</div>
+
+</div>
+
+
+</body>
+</html>
