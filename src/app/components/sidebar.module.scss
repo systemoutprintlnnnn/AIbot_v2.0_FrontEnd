@@ -1,0 +1,30 @@
+.sidebar {
+  top: 0;
+  width: var(--sidebar-width);
+  height: var(--full-height);
+  position: relative;
+  background-color: #F5F5F5;
+}
+
+.sidebar-header {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  position: relative;
+  margin: 65px auto 0;
+  border: #c7c7c7 1px solid;
+}
+
+.sidebar-chat {
+  width: 34px;
+  height: 34px;
+  position: relative;
+  margin: 24px auto 0;
+}
+
+.sidebar-role {
+  width: 34px;
+  height: 34px;
+  position: relative;
+  margin: 15px auto 0;
+}
