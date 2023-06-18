@@ -21,7 +21,7 @@ export function DialogItem(props: Props) {
              onClick={() => onClick(dialog)}>
             <div className={styles.left}>
                 <Space size={24}>
-                    <Badge count={100} size={"small"}>
+                    <Badge count={dialog.count} size={"small"} color={"#fca7a7"}>
                         <Avatar shape={"square"} src={dialog.avatar} size={40}/>
                     </Badge>
                 </Space>

@@ -11,6 +11,8 @@ export interface DialogType {
     timestamp: number;
     // 聊天头
     title: string;
+    // 消息数
+    count: number;
 }
 
 export interface Message {
