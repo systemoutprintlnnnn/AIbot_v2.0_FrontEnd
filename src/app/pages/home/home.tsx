@@ -2,6 +2,7 @@
 
 import styles from "./home.module.scss";
 import {SideBar} from "../../components/sidebar/sidebar";
+import {DialogMessage} from "@/app/components/dialog/dialog-message";
 
 import {
     HashRouter as Router,
@@ -27,7 +28,9 @@ function Screen() {
             <div className={styles["window-content"]}>
                 <Routes>
                     <Route path={Path.Home} element={<Chat/>}/>
-                    <Route path={Path.Chat} element={<Chat/>}/>
+                    <Route path={Path.Chat} element={<Chat/>}>
+                        <Route path=":id" element={<DialogMessage/>}/>
+                    </Route>
                     <Route path={Path.Role} element={<Role/>}/>
                 </Routes>
             </div>

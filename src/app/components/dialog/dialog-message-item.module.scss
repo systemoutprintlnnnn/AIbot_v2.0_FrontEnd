@@ -1,0 +1,16 @@
+.messageWrapper{
+  display: flex;
+  overflow: hidden;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+.message{
+  flex: 1;
+  margin: 0;
+}
+.send{
+  justify-content: flex-end;
+}
+.receive{
+  justify-content: flex-start;
+}

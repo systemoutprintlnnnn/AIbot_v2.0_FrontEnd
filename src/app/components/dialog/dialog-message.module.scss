@@ -1,0 +1,21 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+}
+
+.header{
+  line-height: 60px;
+  border-bottom: 1px solid #F5F5F5;
+  color: #333;
+  font-weight: 500;
+  padding: 0 24px;
+  //background-color: #CC0000;
+}
+
+.scroll{
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+}

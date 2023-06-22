@@ -1,4 +1,4 @@
-import styles from './dialog-item.module.scss';
+import styles from './dialog-list-item.module.scss';
 import {DialogType} from "@/types/chat";
 import {Avatar, Badge, Button, Space} from 'antd';
 
@@ -12,7 +12,7 @@ interface Props {
  * 对话框列表对象元素
  * @constructor
  */
-export function DialogItem(props: Props) {
+export function DialogListItem(props: Props) {
     const {dialog, selected, onClick} = props;
     const date = new Date(dialog.timestamp);
     const timeString = date.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});

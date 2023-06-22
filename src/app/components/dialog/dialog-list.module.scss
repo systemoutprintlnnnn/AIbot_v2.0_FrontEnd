@@ -12,6 +12,8 @@
   }
 
   background-color: #ffffff;
+
+  //background-color: #37c411;
 }
 
 .dialog-search-box {
@@ -64,3 +66,9 @@
 .dialog-search-add::after {
   transform: translate(-50%, -50%);
 }
+
+.dialog-list {
+  height: 100%; /* 设置一个固定高度 */
+  overflow: scroll; /* 添加滚动条 */
+}
+

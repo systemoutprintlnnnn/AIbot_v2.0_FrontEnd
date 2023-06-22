@@ -1,8 +1,9 @@
 import styles from "./dialog-list.module.scss";
-import {DialogItem} from "@/app/components/dialog/dialog-item";
+import {DialogListItem} from "@/app/components/dialog/dialog-list-item";
 import {DialogType} from "@/types/chat";
 import {DialogResizeableSidebar} from "@/app/components/dialog/dialog-resizeable-sidebar";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 /**
  * 对话框列表
@@ -10,31 +11,7 @@ import {useState} from "react";
 export function DialogList() {
     const [dialogs, setDialogs] = useState<DialogType[]>([]);
     const [selected, setSelected] = useState<DialogType>();
-
-    // 测试数据
-    const dialog01: DialogType = {
-        avatar: '/role/bugstack.png',
-        dialogId: 123,
-        read: true,
-        subTitle: '写个java冒泡排序?',
-        timestamp: Date.now(),
-        title: '普通对话',
-        count: 1
-    };
-
-    // 测试数据
-    const dialog02: DialogType = {
-        avatar: '/role/interview.png',
-        dialogId: 124,
-        read: true,
-        subTitle: 'Hello, how are you?',
-        timestamp: Date.now(),
-        title: '面试官',
-        count: 5
-    };
-
-    dialogs.push(dialog01);
-    dialogs.push(dialog02);
+    const navigate = useNavigate();
 
     return (
         // DialogResizeableSidebar 用于调整对话栏的大小
@@ -43,36 +20,67 @@ export function DialogList() {
             <div className={styles["dialog-head"]}>
                 <div className={styles["dialog-search-box"]}><input type="text" placeholder="搜索"/></div>
                 <div className={styles["dialog-search-add"]} onClick={() => {
-                    alert("创建会话");
 
                     // 心里咨询
+                    const dialog01: DialogType = {
+                        avatar: '/role/bugstack.png',
+                        dialogId: Math.floor(Math.random() * 900) + 100,
+                        read: true,
+                        subTitle: '有什么可以帮你的吗？',
+                        timestamp: Date.now(),
+                        title: '直接对话',
+                        count: Math.floor(Math.random() * 90)
+                    };
+
+                    const dialog02: DialogType = {
+                        avatar: '/role/interview.png',
+                        dialogId: Math.floor(Math.random() * 900) + 100,
+                        read: true,
+                        subTitle: '请回答一下Java的基础类型有哪些？',
+                        timestamp: Date.now(),
+                        title: '面试官',
+                        count: Math.floor(Math.random() * 90)
+                    };
+
                     const dialog03: DialogType = {
                         avatar: '/role/psychological.png',
-                        dialogId: 125,
+                        dialogId: Math.floor(Math.random() * 900) + 100,
                         read: true,
                         subTitle: '吹灭别人的灯，不能照亮自己',
                         timestamp: Date.now(),
                         title: '心里咨询',
-                        count: 100
+                        count: Math.floor(Math.random() * 90)
                     };
 
-                    dialogs.unshift(dialog03);
+                    const idx = Math.floor(Math.random() * 3) + 1;
+                    if (1 === idx) {
+                        dialogs.unshift(dialog01);
+                        setSelected(dialog01);
+                    }
 
-                    // 设置选中，这样也会刷新数据
-                    setSelected(dialog03);
+                    if (2 === idx) {
+                        dialogs.unshift(dialog02);
+                        setSelected(dialog02);
+                    }
+
+                    if (3 === idx) {
+                        dialogs.unshift(dialog03);
+                        setSelected(dialog03);
+                    }
+
                 }}></div>
             </div>
             {/*对话列表*/}
-            <div>
-                {/*循环遍历数据，当有数据变更时会自动刷新到页面*/}
+            <div className={styles["dialog-list"]}>
                 {dialogs.map((dialog, index) => (
-                    <DialogItem
+                    <DialogListItem
                         key={dialog.dialogId}
                         dialog={dialog}
                         selected={selected?.dialogId === dialog.dialogId}
                         onClick={() => {
+                            // 点击时跳转到对应的界面，并传递必要参数信息
+                            navigate(`/chat/${dialog.dialogId}`, {state: {title: dialog.title}})
                             setSelected(dialog)
-                            alert("选中对话" + dialog.title)
                         }}
                     />
                 ))}
