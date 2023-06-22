@@ -1,10 +1,6 @@
-export interface DialogType {
+export interface Dialog {
     // 头像
     avatar: string;
-    // 对话ID
-    dialogId: number;
-    // 是否阅读
-    read: boolean;
     // 小标题
     subTitle: string;
     // 对话最后时间

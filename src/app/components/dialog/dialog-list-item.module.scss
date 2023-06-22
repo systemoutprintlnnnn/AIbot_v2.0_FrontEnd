@@ -53,3 +53,21 @@
   max-width: 100%;
   text-align: left;
 }
+
+.chat-item-delete {
+  position: relative;
+  top: 5px;
+  right: -15px;
+  transition: all ease 0.3s;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.wrapper:hover > .chat-item-delete {
+  opacity: 0.5;
+  transform: translateX(-10px);
+}
+
+.wrapper:hover > .chat-item-delete:hover {
+  opacity: 1;
+}

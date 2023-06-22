@@ -2,9 +2,10 @@ import {useParams} from 'react-router-dom';
 import {useLocation} from "react-router-dom";
 import styles from "./dialog-message.module.scss";
 import {DialogMessageItem} from "@/app/components/dialog/dialog-message-item";
-import {Message, MessageDirection, MessageType} from "@/types/chat";
+import {Dialog, Message, MessageDirection, MessageType} from "@/types/chat";
 import {useEffect, useState} from "react";
 import {DialogMessageInput} from "@/app/components/dialog/dialog-message-input";
+import {userChatStore} from "@/app/store/chat-store";
 
 interface Props {
     id: string,
@@ -17,30 +18,17 @@ interface Props {
  */
 export function DialogMessage() {
     const {id} = useParams();
+    const chatStore = userChatStore();
+    const [messages, setMessages] = useState<Message[]>([]);
     const location = useLocation();
     const title = location.state?.title || "新的对话";
-    const [messages, setMessages] = useState<Message[]>([])
 
     // 可以通过接口查询数据
     const fetchDetail = async () => {
-
-        const message01: Message = {
-            avatar: "/role/psychological.png",
-            message: "吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己吹灭别人的灯，不会照亮自己",
-            message_type: MessageType.Text,
-            time: Date.now(),
-            direction: MessageDirection.Receive
-        }
-
-        const message02: Message = {
-            avatar: "/role/runny-nose.png",
-            message: "大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！大师我悟了！",
-            message_type: MessageType.Text,
-            time: Date.now(),
-            direction: MessageDirection.Send
-        }
-
-        setMessages([message01, message02]);
+        const session = await chatStore.currentSession();
+        console.info("进入；" + session.id)
+        const messages = session?.messages;
+        setMessages(messages);
     }
 
     // 输入事件
@@ -58,7 +46,7 @@ export function DialogMessage() {
     useEffect(() => {
         fetchDetail().then(r => {
         });
-    }, [id]);
+    });
 
     return (
         <div className={styles.wrapper}>
