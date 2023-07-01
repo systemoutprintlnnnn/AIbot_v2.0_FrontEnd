@@ -2,7 +2,7 @@ import {useParams} from 'react-router-dom';
 import {useLocation} from "react-router-dom";
 import styles from "./dialog-message.module.scss";
 import {DialogMessageItem} from "@/app/components/dialog/dialog-message-item";
-import {Dialog, Message, MessageDirection, MessageType} from "@/types/chat";
+import {Dialog, Message, MessageDirection, MessageRole, MessageType} from "@/types/chat";
 import {useEffect, useState} from "react";
 import {DialogMessageInput} from "@/app/components/dialog/dialog-message-input";
 import {userChatStore} from "@/app/store/chat-store";
@@ -19,34 +19,37 @@ interface Props {
 export function DialogMessage() {
     const {id} = useParams();
     const chatStore = userChatStore();
+    const currentSession = chatStore.currentSession();
     const [messages, setMessages] = useState<Message[]>([]);
     const location = useLocation();
     const title = location.state?.title || "新的对话";
 
-    // 可以通过接口查询数据
+    // 也可以通过接口查询数据
     const fetchDetail = async () => {
         const session = await chatStore.currentSession();
-        console.info("进入；" + session.id)
         const messages = session?.messages;
         setMessages(messages);
     }
 
     // 输入事件
     const onEnter = (value: string) => {
-        setMessages([...messages, {
+        const newMessage = {
             avatar: "/role/runny-nose.png",
-            message: value,
+            content: value,
             message_type: MessageType.Text,
             time: Date.now(),
-            direction: MessageDirection.Send
-        }])
+            direction: MessageDirection.Send,
+            role: MessageRole.user
+        }
+        setMessages([...messages, newMessage]);
+        chatStore.onSendMessage(newMessage);
     }
 
     // 刷新数据
     useEffect(() => {
         fetchDetail().then(r => {
         });
-    });
+    }, [id]);
 
     return (
         <div className={styles.wrapper}>

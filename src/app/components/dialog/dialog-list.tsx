@@ -10,7 +10,7 @@ import {userChatStore} from "@/app/store/chat-store";
 export function DialogList() {
     const navigate = useNavigate();
     const chatStore = userChatStore();
-    const [sessions, selectedIndex, selectSession] = userChatStore(
+    const [sessions, currentSessionIndex, selectSession] = userChatStore(
         (state) => [
             state.sessions,
             state.currentSessionIndex,
@@ -25,6 +25,7 @@ export function DialogList() {
                 <div className={styles["dialog-search-add"]} onClick={() => {
                     let session = chatStore.openSession();
                     // 点击时跳转到对应的界面，并传递必要参数信息
+                    selectSession(0)
                     navigate(`/chat/${session.id}`, {state: {title: session.dialog.title}})
                 }}></div>
             </div>
@@ -34,11 +35,11 @@ export function DialogList() {
                     <DialogListItem
                         key={session.id}
                         session={session}
-                        selected={selectedIndex === session.id}
+                        selected={currentSessionIndex === index}
                         onClick={() => {
                             // 点击时跳转到对应的界面，并传递必要参数信息
+                            selectSession(index);
                             navigate(`/chat/${session.id}`, {state: {title: session.dialog.title}})
-                            selectSession(session.id);
                         }}
                         onClickDelete={() => {
                             chatStore.deleteSession(index);

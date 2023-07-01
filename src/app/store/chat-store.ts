@@ -1,6 +1,6 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {Dialog, Message, MessageDirection, MessageType} from "@/types/chat";
+import {Dialog, Message, MessageDirection, MessageRole, MessageType} from "@/types/chat";
 
 interface ChatStore {
     id: number;
@@ -10,6 +10,8 @@ interface ChatStore {
     selectSession: (index: number) => void;
     deleteSession: (index: number) => void;
     currentSession: () => ChatSession;
+    onSendMessage: (message: Message) => void;
+    updateCurrentSession: (updater: (session: ChatSession) => void) => void;
 }
 
 export interface ChatSession {
@@ -34,10 +36,11 @@ function createChatSession(): ChatSession {
         messages: [
             {
                 avatar: "/role/wali.png",
-                message: "请问有什么需要帮助的吗？",
+                content: "请问有什么需要帮助的吗？",
                 message_type: MessageType.Text,
                 time: Date.now(),
-                direction: MessageDirection.Receive
+                direction: MessageDirection.Receive,
+                role: MessageRole.system
             }
         ]
     };
@@ -61,6 +64,7 @@ export const userChatStore = create<ChatStore>()(
                 // 保存创建的会话，到 sessions 数组中
                 set((state) => ({
                     currentSessionIndex: session.id,
+                    // 在数组头部插入数据
                     sessions: [session].concat(state.sessions),
                 }));
 
@@ -111,6 +115,23 @@ export const userChatStore = create<ChatStore>()(
                     set(() => ({currentSessionIndex: index}));
                 }
                 return sessions[index];
+            },
+
+            // 发送消息
+            onSendMessage(message: Message) {
+                const session = get().currentSession();
+                get().updateCurrentSession((session) => {
+                    session.messages = session.messages.concat(message);
+                });
+                // 后续调用接口，将消息发送给服务端
+            },
+
+            // 更新当前会话
+            updateCurrentSession(updater) {
+                const sessions = get().sessions;
+                const index = get().currentSessionIndex;
+                updater(sessions[index]);
+                set(() => ({sessions}))
             }
         }),
         {

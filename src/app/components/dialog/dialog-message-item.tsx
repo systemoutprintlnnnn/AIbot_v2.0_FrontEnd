@@ -24,11 +24,11 @@ export function DialogMessageItem(props: Props) {
                         borderRadius: '4px',
                         backgroundColor: '#f6f6f6'
                     }}/>
-                    <p className={styles.message}>{message.message}</p>
+                    <p className={styles.message}>{message.content}</p>
                 </>
             ) : (
                 <>
-                    <p className={styles.message}>{message.message}</p>
+                    <p className={styles.message}>{message.content}</p>
                     <Avatar shape="square" src={message.avatar} size={40} style={{
                         borderRadius: '4px',
                         backgroundColor: '#f6f6f6'

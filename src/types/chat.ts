@@ -13,10 +13,17 @@ export interface Dialog {
 
 export interface Message {
     avatar: string;
-    message: string;
+    content: string;
     message_type: MessageType;
     time: number;
     direction?: MessageDirection;
+    role: MessageRole;
+}
+
+export enum MessageRole{
+    system = 0,
+    user = 1,
+    assistant = 2
 }
 
 export enum MessageType {
