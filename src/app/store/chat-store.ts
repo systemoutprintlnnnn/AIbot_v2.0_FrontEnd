@@ -1,6 +1,7 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {Dialog, Message, MessageDirection, MessageRole, MessageType} from "@/types/chat";
+import {Dialog, Message, MessageDirection, MessageRole, MessageType, SessionConfig} from "@/types/chat";
+import {GptVersion} from "@/app/constants";
 
 interface ChatStore {
     id: number;
@@ -21,6 +22,10 @@ export interface ChatSession {
     dialog: Dialog;
     // 对话消息
     messages: Message[];
+    // 会话配置
+    config: SessionConfig;
+    // 清除会话的索引
+    clearContextIndex?: number;
 }
 
 function createChatSession(): ChatSession {
@@ -42,7 +47,11 @@ function createChatSession(): ChatSession {
                 direction: MessageDirection.Receive,
                 role: MessageRole.system
             }
-        ]
+        ],
+        clearContextIndex: undefined,
+        config: {
+            gptVersion: GptVersion.GPT_3_5_TURBO,
+        }
     };
 }
 
@@ -124,6 +133,7 @@ export const userChatStore = create<ChatStore>()(
                     session.messages = session.messages.concat(message);
                 });
                 // 后续调用接口，将消息发送给服务端
+
             },
 
             // 更新当前会话

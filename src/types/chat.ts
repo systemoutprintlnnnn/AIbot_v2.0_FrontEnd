@@ -1,3 +1,5 @@
+import {GptVersion} from "@/app/constants";
+
 export interface Dialog {
     // 头像
     avatar: string;
@@ -18,6 +20,10 @@ export interface Message {
     time: number;
     direction?: MessageDirection;
     role: MessageRole;
+}
+
+export interface SessionConfig {
+    gptVersion: GptVersion;
 }
 
 export enum MessageRole{
