@@ -7,11 +7,11 @@ interface ChatStore {
     id: number;
     sessions: ChatSession[];
     currentSessionIndex: number;
-    openSession: () => ChatSession;
+    openSession: (dialog?: { avatar?: string; title?: string }) => ChatSession;
     selectSession: (index: number) => void;
     deleteSession: (index: number) => void;
     currentSession: () => ChatSession;
-    onSendMessage: (message: Message) => void;
+    onSendMessage: (value: string) => Message;
     updateCurrentSession: (updater: (session: ChatSession) => void) => void;
 }
 
@@ -28,19 +28,22 @@ export interface ChatSession {
     clearContextIndex?: number;
 }
 
-function createChatSession(): ChatSession {
+function createChatSession(dialog?: {
+    avatar?: string;
+    title?: string;
+}): ChatSession {
     return {
         id: 0,
         dialog: {
-            avatar: "/role/wali.png",
-            title: "新的对话",
+            avatar: dialog?.avatar || "/role/wali.png",
+            title: dialog?.title || "新的对话",
             count: 0,
             subTitle: "请问有什么需要帮助的吗？",
             timestamp: new Date().getTime(),
         },
         messages: [
             {
-                avatar: "/role/wali.png",
+                avatar: dialog?.avatar || "/role/wali.png",
                 content: "请问有什么需要帮助的吗？",
                 message_type: MessageType.Text,
                 time: Date.now(),
@@ -64,15 +67,15 @@ export const userChatStore = create<ChatStore>()(
             currentSessionIndex: 0,
 
             // 开启会话
-            openSession() {
-                const session = createChatSession();
+            openSession(dialog?: { avatar?: string; title?: string }) {
+                const session = createChatSession(dialog);
                 // 每开启一个会话，就对应设置一个对话ID
                 set(() => ({id: get().id + 1}));
                 session.id = get().id;
 
                 // 保存创建的会话，到 sessions 数组中
                 set((state) => ({
-                    currentSessionIndex: session.id,
+                    currentSessionIndex: 0,
                     // 在数组头部插入数据
                     sessions: [session].concat(state.sessions),
                 }));
@@ -127,13 +130,25 @@ export const userChatStore = create<ChatStore>()(
             },
 
             // 发送消息
-            onSendMessage(message: Message) {
+            onSendMessage(value: string) {
                 const session = get().currentSession();
-                get().updateCurrentSession((session) => {
-                    session.messages = session.messages.concat(message);
-                });
-                // 后续调用接口，将消息发送给服务端
 
+                // 构造用户发送的消息
+                const newMessage = {
+                    avatar: "/role/runny-nose.png",
+                    content: value,
+                    message_type: MessageType.Text,
+                    time: Date.now(),
+                    direction: MessageDirection.Send,
+                    role: MessageRole.user,
+                } as Message;
+
+                get().updateCurrentSession((session) => {
+                    session.messages = session.messages.concat(newMessage);
+                });
+
+                return newMessage;
+                // 后续调用接口，将消息发送给服务端
             },
 
             // 更新当前会话

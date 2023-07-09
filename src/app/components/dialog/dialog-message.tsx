@@ -34,27 +34,8 @@ export function DialogMessage() {
 
     // 输入事件
     const onEnter = (value: string) => {
-        const newMessage01 = {
-            avatar: "/role/runny-nose.png",
-            content: value,
-            message_type: MessageType.Text,
-            time: Date.now(),
-            direction: MessageDirection.Send,
-            role: MessageRole.user
-        }
-
-        const newMessage02 = {
-            avatar: "/role/wali.png",
-            content: "`ChatGPT` 接口尚未对接，暂时还不能回复 **！！！**",
-            message_type: MessageType.Text,
-            time: Date.now(),
-            direction: MessageDirection.Receive,
-            role: MessageRole.system
-        }
-        setMessages([...messages, newMessage01, newMessage02]);
-
-        chatStore.onSendMessage(newMessage01);
-        chatStore.onSendMessage(newMessage02);
+        const newMessage= chatStore.onSendMessage(value)
+        setMessages([...messages, newMessage])
     }
 
     // 刷新数据
