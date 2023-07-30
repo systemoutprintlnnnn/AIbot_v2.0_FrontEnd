@@ -43,25 +43,33 @@
 .chat-message-user > .chat-message-container {
   align-items: flex-end;
 }
-
+.chat-message-user {
+  .chat-message-header{
+    flex-direction: row-reverse;
+  }
+}
+.chat-message-header{
+  display: flex;
+}
 .chat-message-avatar {
-  margin-top: 20px;
-  position: relative;
+  // margin-top: 20px;
+  // position: relative;
+}
+.chat-message-edit {
+  // position: absolute;
+  // height: 100%;
+  // width: 100%;
+  // top: 0;
+  margin-left: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all ease 0.3s;
 
-  .chat-message-edit {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: all ease 0.3s;
-
-    button {
-      padding: 7px;
-    }
+  button {
+    padding: 7px;
   }
 }
 
@@ -112,4 +120,9 @@
   &:hover {
     min-width: 0;
   }
+}
+.date{
+  opacity: 0.4;
+  font-size: 12px;
+  margin-top: 4px;
 }

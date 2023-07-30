@@ -1,9 +1,10 @@
 import {useNavigate, useParams} from "react-router-dom";
 import React, {useContext, useMemo} from "react";
 import {RoleContext} from "@/app/components/role/role-list";
-import {userChatStore} from "@/app/store/chat-store";
+import {createNewMessage, userChatStore} from "@/app/store/chat-store";
 import styles from "./role-detail.module.scss";
 import {Avatar, Button, Tag} from "antd";
+import {MessageRole} from "@/types/chat";
 
 interface Props {
     id: number;
@@ -27,7 +28,9 @@ export function RoleDetail() {
             avatar: role?.avatar
         });
         setTimeout(() => {
-            const newMessage = chatStore.onSendMessage(role?.description || '')
+            const newMessage = createNewMessage(role?.description || '', MessageRole.user)
+            // 带着角色信息对话
+            chatStore.onSendMessage(newMessage)
             // 点击时跳转到对应的界面，并传递必要参数信息
             navigate(`/chat/${session.id}`, {state: {title: session.dialog.title}});
         }, 0)
@@ -37,14 +40,14 @@ export function RoleDetail() {
         <div className={styles.wrapper}>
             <div className={styles.header}>{role?.role_name}</div>
             <div className={styles.scroll}>
-                <Avatar shape="square" size={64} src={role?.avatar} />
+                <Avatar shape="square" size={64} src={role?.avatar}/>
                 <p className={styles.desc}>
                     <Tag bordered={false} color="processing">
                         角色介绍
                     </Tag>
                     {role?.description}
                 </p>
-                <Button type="primary" className={styles['btn']} onClick={()=>start()}>开始对话</Button>
+                <Button type="primary" className={styles['btn']} onClick={() => start()}>开始对话</Button>
             </div>
         </div>
     );

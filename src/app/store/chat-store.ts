@@ -2,6 +2,8 @@ import {create} from "zustand";
 import {persist} from "zustand/middleware";
 import {Dialog, Message, MessageDirection, MessageRole, MessageType, SessionConfig} from "@/types/chat";
 import {GptVersion} from "@/app/constants";
+import {nanoid} from "nanoid";
+import {completions} from "@/apis";
 
 interface ChatStore {
     id: number;
@@ -11,8 +13,11 @@ interface ChatStore {
     selectSession: (index: number) => void;
     deleteSession: (index: number) => void;
     currentSession: () => ChatSession;
-    onSendMessage: (value: string) => Message;
+    onSendMessage: (newMessage: Message) => Promise<void>;
     updateCurrentSession: (updater: (session: ChatSession) => void) => void;
+    onRetry: () => void;
+    deleteMessage: (message: Message) => void;
+    createNewMessage: (value: string) => Message;
 }
 
 export interface ChatSession {
@@ -48,7 +53,8 @@ function createChatSession(dialog?: {
                 message_type: MessageType.Text,
                 time: Date.now(),
                 direction: MessageDirection.Receive,
-                role: MessageRole.system
+                role: MessageRole.system,
+                id: nanoid()
             }
         ],
         clearContextIndex: undefined,
@@ -56,6 +62,26 @@ function createChatSession(dialog?: {
             gptVersion: GptVersion.GPT_3_5_TURBO,
         }
     };
+}
+
+function formatMessages(messages: Message[]) {
+    // 如果历史消息超过5，只取最新的3个
+    const latestMessages = messages.length > 3 ? messages.slice(-3) : messages; // 获取最新的三个消息，如果 messages 长度小于等于 3，则返回全部消息
+    return latestMessages.map(({content, role}) => ({
+        content,
+        role,
+    }));
+}
+
+export function createNewMessage(value: string, role?: MessageRole) {
+    return {
+        avatar: role !== MessageRole.user ? "/role/wali.png" : "/role/runny-nose.png",
+        content: value,
+        time: Date.now(),
+        role: role || MessageRole.user,
+        id: nanoid(),
+        streaming: false,
+    } as Message;
 }
 
 export const userChatStore = create<ChatStore>()(
@@ -130,25 +156,53 @@ export const userChatStore = create<ChatStore>()(
             },
 
             // 发送消息
-            onSendMessage(value: string) {
+            async onSendMessage(newMessage: Message) {
                 const session = get().currentSession();
-
-                // 构造用户发送的消息
-                const newMessage = {
-                    avatar: "/role/runny-nose.png",
-                    content: value,
-                    message_type: MessageType.Text,
-                    time: Date.now(),
-                    direction: MessageDirection.Send,
-                    role: MessageRole.user,
-                } as Message;
 
                 get().updateCurrentSession((session) => {
                     session.messages = session.messages.concat(newMessage);
                 });
 
-                return newMessage;
-                // 后续调用接口，将消息发送给服务端
+                const activeMessages = session.messages?.slice(
+                    session.clearContextIndex || 0
+                );
+                const messages = formatMessages(activeMessages);
+
+                const botMessage: Message = createNewMessage("", MessageRole.system);
+                get().updateCurrentSession((session) => {
+                    session.messages = session.messages.concat(botMessage);
+                });
+
+                // 调用接口
+                const {body} = await completions({
+                    messages,
+                    model: session.config.gptVersion,
+                });
+
+                // 填充消息
+                const reader = body!.getReader();
+                const decoder = new TextDecoder();
+                new ReadableStream({
+                    start(controller) {
+                        async function push() {
+                            const {done, value} = await reader.read();
+                            if (done) {
+                                controller.close();
+                                return;
+                            }
+
+                            controller.enqueue(value);
+                            const text = decoder.decode(value);
+                            botMessage.content += text;
+                            get().updateCurrentSession((session) => {
+                                session.messages = session.messages.concat();
+                            });
+                            push();
+                        }
+
+                        push();
+                    },
+                });
             },
 
             // 更新当前会话
@@ -157,7 +211,32 @@ export const userChatStore = create<ChatStore>()(
                 const index = get().currentSessionIndex;
                 updater(sessions[index]);
                 set(() => ({sessions}))
+            },
+
+            onRetry() {
+                const session = get().currentSession();
+                const activeMessages = session.messages?.slice(session.clearContextIndex || 0);
+                const messages = formatMessages(activeMessages);
+                completions({messages, model: session.config.gptVersion});
+            },
+
+            deleteMessage(message: Message) {
+                get().updateCurrentSession((session) => {
+                    const index = session.messages.findIndex((m) => m.id === message.id);
+                    session.messages.splice(index, 1);
+                });
+            },
+
+            createNewMessage(value: string, role?: MessageRole) {
+                return {
+                    avatar: "/role/runny-nose.png",
+                    content: value,
+                    time: Date.now(),
+                    role: MessageRole.user,
+                    id: nanoid(),
+                } as Message;
             }
+
         }),
         {
             name: "chat-store"
