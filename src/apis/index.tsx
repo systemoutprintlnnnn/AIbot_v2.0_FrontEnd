@@ -18,8 +18,12 @@ export const getRoleList = () => {
 export const completions = (data: {
     messages: { content: string; role: MessageRole }[],
     model: GptVersion
+    stream: boolean
 }) => {
-    return fetch('http://localhost:8090/api/v1/chat/completions', {
+    const chat = "http://localhost:8090/openai/chat"
+    const streamChat = "http://localhost:8090/openai/streamChat"
+
+    return fetch(data.stream ? streamChat : chat, {
         method: 'post',
         headers: {
             // b8b6 后续用于写入 token 加密信息

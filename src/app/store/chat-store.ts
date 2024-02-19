@@ -1,6 +1,15 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
-import {Dialog, Message, MessageDirection, MessageRole, MessageType, SessionConfig} from "@/types/chat";
+import {
+    ChatResponse, ChatStreamResponse,
+    Dialog,
+    GracefulResponse,
+    Message,
+    MessageDirection,
+    MessageRole,
+    MessageType,
+    SessionConfig
+} from "@/types/chat";
 import {GptVersion} from "@/app/constants";
 import {nanoid} from "nanoid";
 import {completions} from "@/apis";
@@ -66,8 +75,9 @@ function createChatSession(dialog?: {
 
 function formatMessages(messages: Message[]) {
     // 如果历史消息超过5，只取最新的3个
-    const latestMessages = messages.length > 3 ? messages.slice(-3) : messages; // 获取最新的三个消息，如果 messages 长度小于等于 3，则返回全部消息
-    return latestMessages.map(({content, role}) => ({
+    //【不限制历史消息】
+    // const latestMessages = messages.length > 3 ? messages.slice(-3) : messages; // 获取最新的三个消息，如果 messages 长度小于等于 3，则返回全部消息
+    return messages.map(({content, role}) => ({
         content,
         role,
     }));
@@ -168,15 +178,17 @@ export const userChatStore = create<ChatStore>()(
                 );
                 const messages = formatMessages(activeMessages);
 
-                const botMessage: Message = createNewMessage("", MessageRole.system);
+                const botMessage: Message = createNewMessage("", MessageRole.assistant);
                 get().updateCurrentSession((session) => {
                     session.messages = session.messages.concat(botMessage);
                 });
 
+                const stream = true
                 // 调用接口
                 const {body} = await completions({
                     messages,
                     model: session.config.gptVersion,
+                    stream
                 });
 
                 // 填充消息
@@ -192,8 +204,27 @@ export const userChatStore = create<ChatStore>()(
                             }
 
                             controller.enqueue(value);
+                            //原响应
                             const text = decoder.decode(value);
-                            botMessage.content += text;
+                            console.log(text)
+
+                            var content = null
+                            if (stream) {
+                                content = text
+                                // const t = text.substring(text.indexOf('{') + 1,text.lastIndexOf('}') - 2)
+                                // console.log(t)
+                                // console.log('ttt')
+                                // const response = JSON.parse(t);
+                                // const chatStreamResponse = response as unknown as ChatStreamResponse;
+                                // content = chatStreamResponse.choices[0].delta.content;
+                                // console.log(content)
+                            } else {
+                                const response = JSON.parse(text);
+                                const chatResponse = response.payload as unknown as ChatResponse;
+                                content = chatResponse.choices[0].message.content;
+                            }
+
+                            botMessage.content += content;
                             get().updateCurrentSession((session) => {
                                 session.messages = session.messages.concat();
                             });
@@ -217,7 +248,7 @@ export const userChatStore = create<ChatStore>()(
                 const session = get().currentSession();
                 const activeMessages = session.messages?.slice(session.clearContextIndex || 0);
                 const messages = formatMessages(activeMessages);
-                completions({messages, model: session.config.gptVersion});
+                completions({messages, model: session.config.gptVersion, stream: true});
             },
 
             deleteMessage(message: Message) {

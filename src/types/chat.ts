@@ -1,5 +1,52 @@
 import {GptVersion} from "@/app/constants";
 
+//经过GracefulResponse处理的通用响应
+
+export interface GracefulResponse {
+    status: {
+        code: number
+        msg: string
+    };
+    payload: JSON;
+}
+
+export interface ChatResponse {
+    id: string;
+    object: string;
+    model: string;
+    choices: {
+        index: number;
+        message: {
+            role: string;
+            content: string;
+        }
+        finishReason: string;
+    }[];
+    created: string;
+    usage: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    }
+    system_fingerprint: string;
+}
+
+export interface ChatStreamResponse {
+    id: string;
+    choices: {
+        delta: {
+            content: string;
+        }
+        logprobs: string;
+        finishReason: string;
+        index: number;
+    }[];
+    created: string;
+    model: string;
+    system_fingerprint: string;
+    object: string;
+}
+
 export interface Dialog {
     // 头像
     avatar: string;
