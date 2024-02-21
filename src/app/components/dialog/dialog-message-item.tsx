@@ -66,7 +66,7 @@ export function DialogMessageItem(props: Props) {
                         parentRef={parentRef}
                         defaultShow={false}
                         loading={
-                            (message.content.length === 0) &&
+                            (message.content !== undefined && message.content.length === 0) &&
                             !isUser
                         }
                     />

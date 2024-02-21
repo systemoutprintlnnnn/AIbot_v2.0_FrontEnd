@@ -4,8 +4,8 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'ChatGPT - 小傅哥',
-  description: '您的 ChatGPT 贴心助手！',
+  title: '云问bot',
+  description: '',
 }
 
 export default function RootLayout({

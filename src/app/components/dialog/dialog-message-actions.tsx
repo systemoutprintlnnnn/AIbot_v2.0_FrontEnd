@@ -78,11 +78,13 @@ export default function DialogMessagesActions(props: {
             style={{ width: 160 }}
             options={[
                 { value: GptVersion.GPT_3_5_TURBO, label: 'gpt-3.5-turbo' },
+                { value: GptVersion.GPT_4_0125_PREVIEW, label: 'gpt-4-0125-preview' },
+                { value: GptVersion.GPT_4_1106_VISION_PREVIEW, label: "gpt-4-1106-vision-preview"},
                 { value: GptVersion.GPT_3_5_TURBO_16K, label: 'gpt-3.5-turbo-16k' },
                 { value: GptVersion.TEXT_DAVINCI_002, label: 'text-davinci-002' },
                 { value: GptVersion.TEXT_DAVINCI_003, label: 'text-davinci-003' },
-                { value: GptVersion.GPT_4, label: 'gpt-4【暂无】' },
-                { value: GptVersion.GPT_4_32K, label: 'gpt-4-32k【暂无】' },
+                { value: GptVersion.GPT_4, label: 'gpt-4' },
+                { value: GptVersion.GPT_4_32K, label: 'gpt-4-32k【极贵】' },
             ]}
             onChange={(value) => {
                 chatStore.updateCurrentSession((session) => {

@@ -22,12 +22,13 @@ export const completions = (data: {
 }) => {
     const chat = "http://localhost:8090/openai/chat"
     const streamChat = "http://localhost:8090/openai/streamChat"
+    // const streamChat = "https://proxy.qiheweb.com/v1/chat/completions"
 
     return fetch(data.stream ? streamChat : chat, {
         method: 'post',
         headers: {
             // b8b6 后续用于写入 token 加密信息
-            Authorization: "b8b6",
+            Authorization: "Bearer sk-xzMBtdZG3OgKIZIT5532FcCdB7514051B469394d57F82a1e",
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(data)

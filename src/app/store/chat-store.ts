@@ -13,6 +13,7 @@ import {
 import {GptVersion} from "@/app/constants";
 import {nanoid} from "nanoid";
 import {completions} from "@/apis";
+import {size} from "mermaid/dist/diagrams/state/id-cache";
 
 interface ChatStore {
     id: number;
@@ -190,7 +191,7 @@ export const userChatStore = create<ChatStore>()(
                     model: session.config.gptVersion,
                     stream
                 });
-
+                var count = 0;
                 // 填充消息
                 const reader = body!.getReader();
                 const decoder = new TextDecoder();
@@ -198,6 +199,8 @@ export const userChatStore = create<ChatStore>()(
                     start(controller) {
                         async function push() {
                             const {done, value} = await reader.read();
+                            console.log("第" + count++ + "次推送: ")
+                            // console.log(done, value)
                             if (done) {
                                 controller.close();
                                 return;
@@ -205,26 +208,42 @@ export const userChatStore = create<ChatStore>()(
 
                             controller.enqueue(value);
                             //原响应
-                            const text = decoder.decode(value);
-                            console.log(text)
+                            let text = decoder.decode(value, {stream: true});
+                            // console.log(text)
 
-                            var content = null
-                            if (stream) {
-                                content = text
-                                // const t = text.substring(text.indexOf('{') + 1,text.lastIndexOf('}') - 2)
-                                // console.log(t)
-                                // console.log('ttt')
-                                // const response = JSON.parse(t);
-                                // const chatStreamResponse = response as unknown as ChatStreamResponse;
-                                // content = chatStreamResponse.choices[0].delta.content;
-                                // console.log(content)
-                            } else {
-                                const response = JSON.parse(text);
-                                const chatResponse = response.payload as unknown as ChatResponse;
-                                content = chatResponse.choices[0].message.content;
-                            }
+                            //提取信息
+                            // let start = text.indexOf('{')
+                            // let end = text.indexOf('\n\n')
+                            // //原响应可能是多次推送的内容，需要使用缓存分割
+                            // while (start >= 0 && end > start) {
+                            //     const content = text.slice(start, end)
+                            //     text = text.slice(end)
+                            //     try {
+                            //         const response = JSON.parse(content).choices[0].delta.content
+                            //         // console.log(response)
+                            //         if (typeof response === 'undefined') {
+                            //             break
+                            //         }
+                            //         botMessage.content += response;
+                            //         // console.log(botMessage)
+                            //         get().updateCurrentSession((session) => {
+                            //             session.messages = session.messages.concat();
+                            //         });
+                            //     } catch (e) {
+                            //         console.log(e)
+                            //         break;
+                            //     }
+                            //
+                            //     if (text.startsWith("\n\n")) {
+                            //         text = text.slice(2)
+                            //     }
+                            //     start = text.indexOf('{')
+                            //     end = text.indexOf('\n\n')
+                            // }
+                            //提取信息
 
-                            botMessage.content += content;
+                            botMessage.content += text;
+                            // console.log(botMessage)
                             get().updateCurrentSession((session) => {
                                 session.messages = session.messages.concat();
                             });
