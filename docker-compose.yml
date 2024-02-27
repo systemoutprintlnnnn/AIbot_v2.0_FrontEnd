@@ -1,0 +1,12 @@
+# /usr/local/bin/docker-compose -f /docs/dev-ops/environment/environment-docker-compose.yml up -d
+version: '3.8'
+# docker-compose -f environment-docker-compose.yml up -d
+services:
+  chatgpt-web:
+    container_name: chatgpt-web
+    image: postgraduate/chatgpt-web:1.0
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_HOST_URL=http://localhost:8091
+    restart: always

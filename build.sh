@@ -1,0 +1,1 @@
+docker build -t postgraduate3956/aibot_v2.0_web_0223_local .

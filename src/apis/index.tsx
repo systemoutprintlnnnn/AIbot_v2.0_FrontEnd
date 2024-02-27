@@ -1,6 +1,7 @@
 import {MessageRole} from "@/types/chat";
 import {GptVersion} from "@/app/constants";
 
+const PUBLIC_API_HOST_URL = process.env.NEXT_PUBLIC_API_HOST_URL || "http://localhost:8090"
 const host = 'https://console-mock.apipost.cn/mock/072fa474-ab36-4650-a798-a57e8223e6e6'
 
 export const getRoleList = () => {
@@ -20,8 +21,8 @@ export const completions = (data: {
     model: GptVersion
     stream: boolean
 }) => {
-    const chat = "http://localhost:8090/openai/chat"
-    const streamChat = "http://localhost:8090/openai/streamChat"
+    const chat = PUBLIC_API_HOST_URL + "/openai/chat"
+    const streamChat = PUBLIC_API_HOST_URL + "/openai/streamChat"
     // const streamChat = "https://proxy.qiheweb.com/v1/chat/completions"
 
     return fetch(data.stream ? streamChat : chat, {

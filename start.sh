@@ -1,0 +1,1 @@
+docker run -p 3000:3000 --name aibot_v2.0_web_0223_local -d postgraduate3956/aibot_v2.0_web_0223_local

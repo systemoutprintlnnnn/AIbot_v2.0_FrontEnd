@@ -26,7 +26,8 @@ export function DialogMessageInput(props: Props) {
     }
 
     const handleKeyDown = (e: any) => {
-        if (e.ctrlKey && e.key === "Enter") {
+        // 按下回车键发送消息
+        if (e.key === "Enter") {
             onSend(value);
         }
     }
@@ -42,7 +43,7 @@ export function DialogMessageInput(props: Props) {
                 autoFocus
                 onKeyDown={handleKeyDown}/>
             <Button disabled={!value?.length} type="primary" className={styles.btn}
-                    onClick={() => onSend(value)}>发送(Ctrl+Enter)</Button>
+                    onClick={() => onSend(value)}>发送(Enter)</Button>
         </div>
 
     );
