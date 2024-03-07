@@ -1,8 +1,9 @@
 import {MessageRole} from "@/types/chat";
 import {GptVersion} from "@/app/constants";
+import {useAccessStore} from "@/app/store/access";
 
 const PUBLIC_API_HOST_URL = process.env.NEXT_PUBLIC_API_HOST_URL || "http://localhost:8090"
-const host = 'https://console-mock.apipost.cn/mock/072fa474-ab36-4650-a798-a57e8223e6e6'
+const host = 'https://yunwenbot.top'
 
 export const getRoleList = () => {
     // 从 apiPost mock 接口获取
@@ -18,9 +19,9 @@ export const getRoleList = () => {
 
 export const completions = (data: {
     messages: { content: string; role: MessageRole }[],
-    model: GptVersion
+    model: GptVersion,
     stream: boolean
-}) => {
+}, token: string) => {
     const chat = PUBLIC_API_HOST_URL + "/openai/chat"
     const streamChat = PUBLIC_API_HOST_URL + "/openai/streamChat"
     // const streamChat = "https://proxy.qiheweb.com/v1/chat/completions"
@@ -28,11 +29,43 @@ export const completions = (data: {
     return fetch(data.stream ? streamChat : chat, {
         method: 'post',
         headers: {
-            // b8b6 后续用于写入 token 加密信息
-            Authorization: "Bearer sk-xzMBtdZG3OgKIZIT5532FcCdB7514051B469394d57F82a1e",
+            //写入token
+            satoken: token,
             'Content-Type': 'application/json;charset=utf-8'
         },
         body: JSON.stringify(data)
     })
+}
+
+/**
+ * 登录鉴权接口
+ * @param verifyCodeRequest
+ */
+export const login = (verifyCodeRequest: {
+    code: string
+    sessionId?: string
+}) => {
+    console.log(PUBLIC_API_HOST_URL)
+    const accessState = useAccessStore.getState()
+    const defaultSessionId = 'sessionId'
+    const sessionId = verifyCodeRequest.sessionId || defaultSessionId
+    return fetch(`${PUBLIC_API_HOST_URL}/auth/verifyCode`, {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify({ ...verifyCodeRequest, sessionId })
+    });
+};
+
+export const authorize = async (token: string) => {
+
+    return await fetch(`${PUBLIC_API_HOST_URL}/auth/authorize`, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            satoken: token
+        }
+    });
 }
 

@@ -1,12 +1,13 @@
 import {create} from "zustand";
 import {persist} from "zustand/middleware";
+import {IdWorker} from "@/app/utils/id-worker";
 
 /**
  * 配置文件
  * @param tightBorder true/false 是否全框体展示
  */
 export const DEFAULT_CONFIG = {
-    tightBorder: false,
+    tightBorder: true,
 }
 
 export type ChatConfig = typeof DEFAULT_CONFIG;

@@ -14,6 +14,8 @@ import {GptVersion} from "@/app/constants";
 import {nanoid} from "nanoid";
 import {completions} from "@/apis";
 import {size} from "mermaid/dist/diagrams/state/id-cache";
+import {cookies} from "next/headers";
+import {useAccessStore} from "@/app/store/access";
 
 interface ChatStore {
     id: number;
@@ -169,7 +171,7 @@ export const userChatStore = create<ChatStore>()(
             // 发送消息
             async onSendMessage(newMessage: Message) {
                 const session = get().currentSession();
-
+                const token = useAccessStore.getState().token;
                 get().updateCurrentSession((session) => {
                     session.messages = session.messages.concat(newMessage);
                 });
@@ -189,8 +191,8 @@ export const userChatStore = create<ChatStore>()(
                 const {body} = await completions({
                     messages,
                     model: session.config.gptVersion,
-                    stream
-                });
+                    stream,
+                }, token);
                 var count = 0;
                 // 填充消息
                 const reader = body!.getReader();
@@ -267,7 +269,11 @@ export const userChatStore = create<ChatStore>()(
                 const session = get().currentSession();
                 const activeMessages = session.messages?.slice(session.clearContextIndex || 0);
                 const messages = formatMessages(activeMessages);
-                completions({messages, model: session.config.gptVersion, stream: true});
+                completions({
+                    messages,
+                    model: session.config.gptVersion,
+                    stream: true
+                }, useAccessStore.getState().token);
             },
 
             deleteMessage(message: Message) {
